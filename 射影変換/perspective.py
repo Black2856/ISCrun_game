@@ -64,6 +64,8 @@ def area_perspective_transform(img, point, scale):
 
     return perspective_image
 
+
+
 #img = cv2.imread("a.png")
 #point = [[282, 195], [196, 71], [59, 104], [109, 261]]
 #drawpoint(img, point)

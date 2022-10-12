@@ -376,7 +376,7 @@ class AreaDetection:
         self.__drawpoint(outputImg, point, color=(0, 255, 0))
 
         #表示
-        return [outputImg, bit_area], point, success
+        return [outputImg, bit_area, rawImg], point, success
 
 
 
