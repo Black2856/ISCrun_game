@@ -94,3 +94,5 @@ class blockAreaDetect:
 
         #plt.imshow(np.array(green_bit))
         return block_color, success
+
+    

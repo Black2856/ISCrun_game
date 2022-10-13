@@ -360,9 +360,12 @@ class AreaDetection:
         point = [a.tolist() for i,a in enumerate(point) if count[i] >= 2]
 
         li_pos_COG2 = [i for i in li_pos_COG if i[0] in point and i[1] in point]
+        success = False
         point, success = self.__sort_point(point, li_pos_COG2, blue_circle, green_circle)
         if(success == False):
             point = []
+        else:
+            point = [point[2], point[1], point[0], point[3]]
 
         #self.__drawline(outputImg, li_pos_COG2)
         #print(li_pos_COG)

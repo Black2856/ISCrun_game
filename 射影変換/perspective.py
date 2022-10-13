@@ -40,29 +40,41 @@ def point_scale(point, scale):
     return ret.tolist()
 
 ### エリアの角のポイントからscale分の距離で射影変換する
+### エリアの角のポイントからscale分の距離で射影変換する
 def area_perspective_transform(img, point, scale):
     height, width, channels = img.shape[:3]
     size = 300
+    b_size = 20
+    b_dist = 157
 
     source_points1 = np.array([point[0], point[1], point[2], point[3]], dtype=np.float32)
     target_points = np.array([[0, 0], [0, size], [size, size], [size, 0]], dtype=np.float32)
 
     mat1 = cv2.getPerspectiveTransform(source_points1, target_points)
     mat2 = cv2.getPerspectiveTransform(target_points, source_points1)
-
+    
+    #エリアの射影変換
     diff = scale
-    new_point = np.array([[[0-diff, 0-diff], [size+diff, 0-diff], [size+diff, size+diff], [0-diff, size+diff]]], dtype='float32')
-    new_point = cv2.perspectiveTransform(new_point, mat2)
-    new_point = new_point[0]
-    source_points2 = np.array([new_point[0], new_point[1], new_point[2], new_point[3]], dtype=np.float32)
+    area_point = np.array([[[0-diff, 0-diff], [size+diff, 0-diff], [size+diff, size+diff], [0-diff, size+diff]]], dtype='float32')
+    area_point = cv2.perspectiveTransform(area_point, mat2)
+    area_point = area_point[0]
+    source_points2 = np.array([area_point[0], area_point[1], area_point[2], area_point[3]], dtype=np.float32)
     mat3 = cv2.getPerspectiveTransform(source_points2, target_points)
+    perspective_image1 = cv2.warpPerspective(img, mat3, (size, size))
 
-    perspective_image = cv2.warpPerspective(img, mat3, (size, size))
+    #ボーナスブロックの射影変換
+    b_point = np.array([[[300-b_size, 300-b_size+b_dist], [300+b_size, 300-b_size+b_dist], [300+b_size, 300+b_size+b_dist], [300-b_size, 300+b_size+b_dist]]], dtype='float32')
+    b_point = cv2.perspectiveTransform(b_point, mat2)
+    b_point = b_point[0]
+    source_points3 = np.array([b_point[0], b_point[1], b_point[2], b_point[3]], dtype=np.float32)
+    mat4 = cv2.getPerspectiveTransform(source_points3, target_points)
+    perspective_image2 = cv2.warpPerspective(img, mat4, (size, size))
 
-    p = np.array([[[-50, -50]]], dtype='float32')
-    pointsOut = cv2.perspectiveTransform(p, mat2)
+    #p = np.array([[[-50, -50]]], dtype='float32')
+    #pointsOut = cv2.perspectiveTransform(p, mat2)
+    #print(pointsOut)
 
-    return perspective_image
+    return perspective_image1, perspective_image2
 
 
 
