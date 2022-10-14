@@ -185,6 +185,8 @@ class AreaDetection:
             comp = deepcopy(point2)
             comp = [[j[0], j[1]] for j in comp if not(j[0] in used_point[i])] #used_pointのポイントを除外
             relative = np.array([a[1] - x[1] for a in comp])
+            if(len(relative) == 0):
+                break
 
             #相対角度の計算
             deg = np.array([[[comp[j][0], self.__pos2deg([a[0], a[1]])] for j, a in enumerate(relative)]])
@@ -339,8 +341,9 @@ class AreaDetection:
         pointer = [i for i in pointer if i != -1] #除外された輪郭を削除
 
 
-        if(len(COG) < 3):
-            return outputImg
+        if(len(COG) <= 2):
+            return [outputImg, bit_area, rawImg], [[]], False
+
         #COG.append([122, 305])
         #絞りだしたポイントから4つの重なる直線を調べる
         COG = np.array(COG)
