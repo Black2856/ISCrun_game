@@ -95,4 +95,37 @@ class blockAreaDetect:
         #plt.imshow(np.array(green_bit))
         return block_color, success
 
-    
+    def detect_bonus_block(self, img):
+        block_color = 0 #0:無, 1:赤, 2:緑, 3:青, 4:黄色
+        target_point = 150
+
+        #画像の平滑化
+        size = 4
+        kernel = np.ones((size, size),np.float32) / (size**2)
+        blurred_img = cv2.filter2D(img, -1, kernel)
+
+        #マスク
+        red_bit1 = self.img_mask(blurred_img, self.__param.RED_BLOCK_MIN_THRESHOLD1, self.__param.RED_BLOCK_MAX_THRESHOLD1)
+        red_bit2 = self.img_mask(blurred_img, self.__param.RED_BLOCK_MIN_THRESHOLD2, self.__param.RED_BLOCK_MAX_THRESHOLD2)
+        red_bit = red_bit1 | red_bit2
+        green_bit = self.img_mask(blurred_img, self.__param.GREEN_BLOCK_MIN_THRESHOLD, self.__param.GREEN_BLOCK_MAX_THRESHOLD)
+        blue_bit = self.img_mask(blurred_img, self.__param.BLUE_BLOCK_MIN_THRESHOLD, self.__param.BLUE_BLOCK_MAX_THRESHOLD)
+        yellow_bit = self.img_mask(blurred_img, self.__param.YELLOW_BLOCK_MIN_THRESHOLD, self.__param.YELLOW_BLOCK_MAX_THRESHOLD)
+
+        #検知
+        if(red_bit[target_point][target_point] == 255):
+            block_color = 1
+        if(green_bit[target_point][target_point] == 255):
+            block_color = 2
+        if(blue_bit[target_point][target_point] == 255):
+            block_color = 3
+        if(yellow_bit[target_point][target_point] == 255):
+            block_color = 4
+
+        #ブロックの数が正しいか
+        success = False
+        if(not(block_color == 0)):
+            success = True
+
+        #plt.imshow(np.array(green_bit))
+        return block_color, success
